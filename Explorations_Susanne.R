@@ -87,7 +87,7 @@ dev.off()
 
 #### Write descriptive statistics in table PEDALING ####
 datamov<-data_summary(movdata2, varname="mov_av_rhythm", 
-                    groupnames=c("condition_m", "tasks"))
+                      groupnames=c("condition_m", "tasks"))
 write.table(datamov, "means/Means.csv", row.names=FALSE, sep=",")
 
 
@@ -97,7 +97,9 @@ movdata2$condition_m<-factor(movdata2$condition_m, levels=c("speech only", "low 
 mot1<-lmer(mov_av_rhythm~condition_m*tasks + trial+ (1+condition_m*tasks+trial|speaker), data = movdata2)
 summary(mot1)
 # performance library to check some general model assumptions
-check_model(mot1) # high collinearity for interactive model - for this reason additive model
+
+f1<-check_model(mot1) # high collinearity for interactive model - for this reason additive model
+
 
 # final model without interaction
 mot2<-lmer(mov_av_rhythm~condition_m+tasks + trial+(1+condition_m+tasks|speaker), data = movdata2)
@@ -178,8 +180,8 @@ write.csv(coeffsp8, "modelcoef/coeffsp8.csv") # export
 
 # write descriptive stats
 dataspeech<-data_summary(speechdata2, varname="env8_av_rhythm", 
-                   groupnames=c("condition_m", "tasks", "trial","speaker"))
-write.table(dataspeech, "means/Env8Means_new.csv", row.names=FALSE, sep=",")
+                         groupnames=c("condition_m", "tasks"))
+write.table(dataspeech, "means/Env8Means.csv", row.names=FALSE, sep=",")
 
 
 # final model imf1
@@ -194,9 +196,9 @@ coeffsp8a <- cbind(coeffs, "p value" = round(p,4)) # combine it into one object
 write.csv(coeffsp8a, "modelcoef/coeffsp8a.csv") # export
 
 # write descriptive stats
-dataimf1<-data_summary(speechdata, varname="env8_av_rhythmimf2", 
-                   groupnames=c("condition_m", "tasks"))
-write.table(dataimf1, "means/Envimf2Means.csv", row.names=FALSE, sep=",")
+dataimf1<-data_summary(speechdata, varname="env8_av_rhythmimf1", 
+                       groupnames=c("condition_m", "tasks"))
+write.table(dataimf1, "means/Envimf1Means.csv", row.names=FALSE, sep=",")
 
 # final model imf2
 lmer(env8_av_rhythmimf2~condition_m*tasks+trial+(1+condition_m*tasks|speaker), data=speechdataimf2)->sp8b
@@ -207,6 +209,12 @@ coeffs <- coef(summary(sp8b)) # get estimates, etc...
 p <- pnorm(abs(coeffs[, "t value"]), lower.tail = FALSE) * 2 # add the much disputed p-values
 coeffsp8b <- cbind(coeffs, "p value" = round(p,4)) # combine it into one object
 write.csv(coeffsp8b, "modelcoef/coeffsp8b.csv") # export
+
+# write descriptive stats
+dataimf2<-data_summary(speechdata, varname="env8_av_rhythmimf2", 
+                       groupnames=c("condition_m", "tasks"))
+write.table(dataimf1, "means/Envimf2Means.csv", row.names=FALSE, sep=",")
+
 
 
 #################################################
@@ -259,7 +267,7 @@ k2<-ggplot(Corrdataimf2, aes(x=(mov_av_rhythm), y=env8_av_rhythmimf2)) +
 
 
 figure <- ggarrange(k, k1, k2,
-                ncol = 3, nrow = 1)
+                    ncol = 3, nrow = 1)
 figure
 
 dev.off()
