@@ -18,8 +18,6 @@ library(emmeans)
 #### Different folders ####
 basefolder <- dirname(rstudioapi::getSourceEditorContext()$path)
 setwd(basefolder)
-statisfolder <- paste0(basefolder, "/rhythmdatasetforstatistics/")
-
 
 #### Read data for envelope 8 Hz ####
 read.csv(paste0(statisfolder, "rhythm_dataset_for_stat_env8.csv"), h=TRUE, sep=",")->data
