@@ -16,9 +16,14 @@ library(multcomp)
 library(emmeans)
 
 #### Different folders ####
-basefolder <- dirname(dirname(rstudioapi::getSourceEditorContext()$path))
+basefolder <- dirname(rstudioapi::getSourceEditorContext()$path)
+setwd(basefolder)
 statisfolder <- paste0(basefolder, "/rhythmdatasetforstatistics/")
-setwd(statisfolder)
+
+
+#### Read data for envelope 8 Hz ####
+read.csv(paste0(statisfolder, "rhythm_dataset_for_stat_env8.csv"), h=TRUE, sep=",")->data
+summary(data)
 
 #### summary function for plots ####
 data_summary <- function(data, varname, groupnames){
@@ -33,9 +38,7 @@ data_summary <- function(data, varname, groupnames){
   return(data_sum)
 }
 
-#### Read data for envelope 8 Hz ####
-read.csv("rhythm_dataset_for_stat_env8.csv", h=TRUE, sep=",")->data
-summary(data)
+
 
 ## Pre-processing of data structure ##
 data$speaker<-as.factor(data$speaker)
@@ -77,7 +80,7 @@ summary(movdata2)
 
 #### PLOT PEDALING ####
 levels(movdata2$tasks)[levels(movdata2$tasks)=='motion only'] <- 'no speech'
-png("figures/PedalingRates.png", units="in", width=6, height=4, res=900)
+png("./figures/PedalingRates.png", units="in", width=6, height=4, res=900)
 e <- ggplot(movdata2, aes(x = condition_m, y = mov_av_rhythm))
 e + theme_bw()+facet_wrap(~tasks, ncol=3)+geom_violin(aes(fill = condition_m), trim = FALSE) + 
   geom_boxplot(width = 0.2)+
@@ -86,7 +89,7 @@ e + theme_bw()+facet_wrap(~tasks, ncol=3)+geom_violin(aes(fill = condition_m), t
 dev.off()
 
 #### Write descriptive statistics in table PEDALING ####
-datamov<-data_summary(movdata2, varname="mov_av_rhythm", 
+datamov <- data_summary(movdata2, varname="mov_av_rhythm", 
                       groupnames=c("condition_m", "tasks"))
 write.table(datamov, "means/Means.csv", row.names=FALSE, sep=",")
 
@@ -143,7 +146,7 @@ speechdataimf2$condition_m<-factor(speechdataimf2$condition_m, levels=c("rest", 
 
 #### PLOT Speechrates ####
 
-png("figures/SpeechRate.png", units="in", width=4, height=6, res=900)
+png("./figures/SpeechRate.png", units="in", width=4, height=6, res=900)
 f <- ggplot(speechdata2, aes(x = condition_m, y = env8_av_rhythm))+ theme_bw()+facet_wrap(~tasks, ncol=3)+geom_violin(aes(fill = condition_m), trim = FALSE) + 
   geom_boxplot(width = 0.2)+ylim(2.5,6)+
   scale_fill_manual(values = c("#FC4E07","#00AFBB", "#E7B800" ))+
@@ -256,7 +259,7 @@ k1<-ggplot(Corrdataimf1, aes(x=(mov_av_rhythm), y=env8_av_rhythmimf1)) +
   theme_bw()+theme(legend.position = "none")+facet_wrap(~tasks*condition_m)
 
 names(Corrdataimf2)[names(Corrdataimf2)=="condition_m"]  <- "Workload"
-png("figures/Correlations.png", units="in", width=10, height=6, res=900)
+png("./figures/Correlations.png", units="in", width=10, height=6, res=900)
 k2<-ggplot(Corrdataimf2, aes(x=(mov_av_rhythm), y=env8_av_rhythmimf2)) + 
   geom_point()+ylab("IMF2 in Hz")+xlab("Motion rate in Hz")+geom_smooth(method = "lm", se=TRUE)+
   stat_regline_equation(label.y = 3.5, aes(label = ..eq.label..)) +
@@ -270,5 +273,5 @@ figure <- ggarrange(k, k1, k2,
                     ncol = 3, nrow = 1)
 figure
 
-dev.off()
+
 
