@@ -20,7 +20,7 @@ basefolder <- dirname(rstudioapi::getSourceEditorContext()$path)
 setwd(basefolder)
 
 #### Read data for envelope 8 Hz ####
-read.csv(paste0(statisfolder, "rhythm_dataset_for_stat_env8.csv"), h=TRUE, sep=",")->data
+read.csv(paste0(basefolder, "rhythm_dataset_for_stat_env8.csv"), h=TRUE, sep=",")->data
 summary(data)
 
 #### summary function for plots ####
